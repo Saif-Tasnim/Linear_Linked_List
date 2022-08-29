@@ -36,6 +36,9 @@ void deletion_value_non_unique(Node*& head); // 14
 void reverse_list_three_pointers(Node*&head); // 15
 Node* reverse_list_recursion_function(Node* head); // 16
 void find_mid_value_using_slow_fast_method (Node*& head); // 17
+void create_cycle_kth_position(Node*&head,int pos); // 18
+bool detect_cycle_in_list(Node*&head); // 19
+void delete_cycle_in_list(Node*&head); // 20
 
 /// make option list
 int selectOption()
@@ -62,7 +65,7 @@ int selectOption()
     cout<< "Press 20 Remove a cycle."<<endl;
     cout<< "Press 0 To Exit."<<endl;
     int n;
-    cout<< "\nEnter Your Choice From (1-14)"<<endl;
+    cout<< "\nEnter Your Choice From (1-20)"<<endl;
     cin>>n;
     return n;
 
@@ -304,32 +307,73 @@ int main()
             insert_after_spec_value_non_unique(head);
         }
 
-        else if(option==13){
+        else if(option==13)
+        {
             deletion_value_unique(head);
         }
 
-        else if(option==14){
+        else if(option==14)
+        {
             deletion_value_non_unique(head);
         }
-        else if(option==15){
-          reverse_list_three_pointers(head);
+        else if(option==15)
+        {
+            reverse_list_three_pointers(head);
         }
-         else if(option==16){
-          head = reverse_list_recursion_function(head);
+        else if(option==16)
+        {
+            head = reverse_list_recursion_function(head);
         }
-         else if(option==17){
-          find_mid_value_using_slow_fast_method(head);
+        else if(option==17)
+        {
+            find_mid_value_using_slow_fast_method(head);
         }
-         else if(option==18){
+        else if(option==18)
+        {
+            int n;
+            cout<< "Enter the position for creates cycle : ";
+            cin>> n;
+            if(n>0 && n<=sizeOfList(head))
+            {
+                create_cycle_kth_position(head,n);
+            }
+            else
+            {
+                cout<< "Invalid Position. please select position " << "1 to " <<sizeOfList(head)<< " .\n\n" ;
+            }
+        }
+        else if(option==19)
+        {
+            bool b = detect_cycle_in_list(head);
+            if(b==true)
+            {
+                cout<< "\tCycle detected\n\n";
+            }
+            else
+            {
+                cout<< "\tNo cycle found\n\n";
+            }
+        }
+        else if(option==20)
+        {
+            if(head==NULL)
+            {
+                cout<< "No value found\n\n";
 
+            }
+            else
+            {
+                bool b = detect_cycle_in_list(head);
+                if(b)
+                {
+                    delete_cycle_in_list(head);
+                }
+                else
+                {
+                    cout<< "\tNo cycle detected\n\n";
+                }
+            }
         }
-         else if(option==19){
-
-        }
-         else if(option==20){
-
-        }
-
 
         option = selectOption();
     }
@@ -510,25 +554,28 @@ void insert_after_spec_value_non_unique(Node*&head)
 
 /// option 13
 
-void deletion_value_unique(Node*& head){
+void deletion_value_unique(Node*& head)
+{
 
- if(head==NULL){
-    cout<< "\tAlready empty list\n";
-    return ;
- }
- Node* temp = head;
- int val;
- cout<< "Enter the value you wanna delete ? : ";
- cin>> val;
- int f = search_value_unique(head,val);
- delete_certain_position(head,f);
+    if(head==NULL)
+    {
+        cout<< "\tAlready empty list\n";
+        return ;
+    }
+    Node* temp = head;
+    int val;
+    cout<< "Enter the value you wanna delete ? : ";
+    cin>> val;
+    int f = search_value_unique(head,val);
+    delete_certain_position(head,f);
 
 }
 
 /// option 14
 
-void deletion_value_non_unique(Node*& head){
- if(head==NULL)
+void deletion_value_non_unique(Node*& head)
+{
+    if(head==NULL)
     {
         cout<< "Nothing is found\n";
         return;
@@ -551,63 +598,139 @@ void deletion_value_non_unique(Node*& head){
 
 /// option 15
 
-void reverse_list_three_pointers(Node*&head){
-if(head==NULL){
-    cout<< "Nothing to reverse\n";
-    return ;
-}
-Node* temp=head;
-Node* prev = NULL;
-Node* current = temp;
-Node* nxt = temp->next;
+void reverse_list_three_pointers(Node*&head)
+{
+    if(head==NULL)
+    {
+        cout<< "Nothing to reverse\n";
+        return ;
+    }
+    Node* temp=head;
+    Node* prev = NULL;
+    Node* current = temp;
+    Node* nxt = temp->next;
 
-while(true){
-    current->next = prev;   ///NULL   1    2    3    4     5
-    prev = current;         /// pre   curr nxt
-    current = nxt;
-    if(current==NULL)break;
-    nxt = nxt->next;
-}
-head = prev;
-cout<< "\tSuccessfully reversed\n";
+    while(true)
+    {
+        current->next = prev;   ///NULL   1    2    3    4     5
+        prev = current;         /// pre   curr nxt
+        current = nxt;
+        if(current==NULL)break;
+        nxt = nxt->next;
+    }
+    head = prev;
+    cout<< "\tSuccessfully reversed\n";
 }
 
 /// option 16
 
-Node* reverse_list_recursion_function(Node* head){
-if(head==NULL){
-    cout<< "List is empty\n"<<endl;
-    return head;
-}
+Node* reverse_list_recursion_function(Node* head)
+{
+    if(head==NULL)
+    {
+        cout<< "List is empty\n"<<endl;
+        return head;
+    }
 
-if(head->next == NULL){
-    cout<< "\tSuccessfully reversed\n";
-    return head;
-}
-Node* nn = reverse_list_recursion_function(head->next);   /// 1  2  3  4  5
-head->next->next = head;                    ///
-head->next = NULL;
+    if(head->next == NULL)
+    {
+        cout<< "\tSuccessfully reversed\n";
+        return head;
+    }
+    Node* nn = reverse_list_recursion_function(head->next);   /// 1  2  3  4  5
+    head->next->next = head;                    ///
+    head->next = NULL;
 //cout<< temp->data<< ", ";
 
-return nn;
+    return nn;
 
 }
 
 /// option 17
-void find_mid_value_using_slow_fast_method (Node*& head){
-if(head==NULL){
-    cout<< "No data found\n\n";
-    return;
-}
-Node* slow = head;
-Node* fast = head;
-while(fast!=NULL && fast->next!=NULL ){
-    slow = slow->next;
-    fast = fast->next->next;
-}
-cout<< "Mid Value is = " << slow->data << endl;
+void find_mid_value_using_slow_fast_method (Node*& head)
+{
+    if(head==NULL)
+    {
+        cout<< "No data found\n\n";
+        return;
+    }
+    Node* slow = head;
+    Node* fast = head;
+    while(fast!=NULL && fast->next!=NULL )
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    cout<< "Mid Value is = " << slow->data << endl;
 
 
 }
 
+/// option 18
+void create_cycle_kth_position(Node*&head,int pos)
+{
+
+    if(head==NULL)
+    {
+        cout<< "No data found\n";
+        return;
+    }
+    Node* temp = head;
+    Node* startNode;
+    int i=0;
+    while(temp->next!=NULL)
+    {
+        i++;
+        if(i==pos)
+        {
+            startNode = temp;
+        }
+        temp=temp->next;
+    }
+    temp->next = startNode;
+}
+
+/// option 19
+bool detect_cycle_in_list(Node* &head)
+{
+    if(head==NULL)
+    {
+        /// cout<< "No value is found\n";
+        return false;
+    }
+    Node* slow = head;
+    Node* fast = head;
+    while(fast!=NULL && fast->next!=NULL)
+    {
+        slow = slow->next;
+        fast=fast->next->next;
+        if(slow->next==fast->next)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void delete_cycle_in_list(Node*&head)
+{
+    Node* temp = head;
+    Node* slow;
+    Node* fast;
+    do
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    while(slow!=fast);
+
+    fast = head;
+    while(slow->next!= fast->next)
+    {
+        fast=fast->next;
+        slow = slow->next;
+    }
+    slow->next = NULL;
+    cout<< "\tSuccessfully removed cycle\n\n";
+}
 
